@@ -36,7 +36,7 @@ public class MatchScheduleImportController {
             excelImportService.processExcelFile(excelFile);
         } catch (Exception e) {
             log.error("Error while parsing excel with exception :- {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error while parsing excel file");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.OK).body("File uploaded successfully");
     }
