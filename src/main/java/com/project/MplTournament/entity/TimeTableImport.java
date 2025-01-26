@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
@@ -23,7 +24,9 @@ public class TimeTableImport {
 
     private String matchName;
 
-    private LocalDateTime matchDateAndTime;
+    private LocalDate matchDate;
+
+    private LocalTime matchTime;
 
     private Integer matchStatus;
 
