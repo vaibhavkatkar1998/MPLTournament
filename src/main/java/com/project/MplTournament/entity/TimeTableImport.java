@@ -22,7 +22,9 @@ public class TimeTableImport {
     @GeneratedValue
     private Integer id;
 
-    private String matchName;
+    private String team1;
+
+    private String team2;
 
     private LocalDate matchDate;
 

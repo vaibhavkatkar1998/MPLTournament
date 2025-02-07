@@ -34,11 +34,11 @@ public class ExcelImportService {
             TimeTableImport timeTableImport = new TimeTableImport();
             timeTableImport.setMatchStatus(2);
             timeTableImport.setStadium(timeTableImportDTO.getStadium());
-            timeTableImport.setMatchName(timeTableImportDTO.getMatchName());
+            timeTableImport.setTeam1(timeTableImportDTO.getTeam1());
+            timeTableImport.setTeam2(timeTableImportDTO.getTeam2());
             timeTableImport.setMatchDate(timeTableImportDTO.getDate());
             timeTableImport.setMatchTime(timeTableImportDTO.getTime());
             timeTableImportRepo.save(timeTableImport);
         }
-        log.info("Started processing excel import");
     }
 }

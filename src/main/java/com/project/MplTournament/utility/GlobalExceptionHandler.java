@@ -1,9 +1,6 @@
 package com.project.MplTournament.utility;
 
-import com.project.MplTournament.ExcpetionHandler.ExpiredTokenException;
-import com.project.MplTournament.ExcpetionHandler.InvalidTokenException;
-import com.project.MplTournament.ExcpetionHandler.UserNameNotFoundException;
-import com.project.MplTournament.ExcpetionHandler.UsernameMismatchException;
+import com.project.MplTournament.ExcpetionHandler.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,5 +31,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUserNameNotFound(UserNameNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Username not found: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(VotingTimeExceedException.class)
+    public ResponseEntity<String> handleVotingTimeExceeds(VotingTimeExceedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Voting Time Exceeds: " + ex.getMessage());
     }
 }

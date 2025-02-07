@@ -1,23 +1,24 @@
 package com.project.MplTournament.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TimeTableImportDTO {
+public class MatchDetailsDTO {
 
     private Integer id;
 
-    private LocalDate date;
+    private LocalDate matchDate;
 
-    private LocalTime time;
+    private LocalTime matchTime;
 
     private String team1;
 
@@ -27,4 +28,5 @@ public class TimeTableImportDTO {
 
     private String stadium;
 
+    private String selectedTeam;
 }

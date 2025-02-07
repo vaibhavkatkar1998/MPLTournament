@@ -24,7 +24,7 @@ public class ExcelParser {
 
     public List<TimeTableImportDTO> parseTimeTable(MultipartFile matchScheduleExcelFile) throws IOException {
         List<TimeTableImportDTO> timeTableImports = new ArrayList<>();
-
+        log.info("Started processing excel import");
         try(InputStream inputStream = matchScheduleExcelFile.getInputStream()) {
             Workbook workbook = new XSSFWorkbook(inputStream);
             // getting data from first sheet
@@ -34,28 +34,32 @@ public class ExcelParser {
             rowIterator.next();
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
+                if(rowIterator.hasNext()) {
+                    // Extract data from each row
+                    String date = getCellValue(row.getCell(0),0);
+                    String time = getCellValue(row.getCell(1),1);
+                    String team1 = getCellValue(row.getCell(2),2);
+                    String team2 = getCellValue(row.getCell(3),3);
+                    String matchStadium = getCellValue(row.getCell(4),4);
 
-                // Extract data from each row
-                String date = getCellValue(row.getCell(0),0);
-                String time = getCellValue(row.getCell(1),1);
-                String matchName = getCellValue(row.getCell(2),2);
-                String matchStadium = getCellValue(row.getCell(4),3);
+                    // Create a new MatchDTO and populate it
+                    TimeTableImportDTO timeTableImportDTO = new TimeTableImportDTO();
+                    if(!date.isEmpty() && !time.isEmpty()) {
+                        timeTableImportDTO.setDate(LocalDate.parse(date));
+                        timeTableImportDTO.setTime(LocalTime.parse(time));
+                    } else {
+                        log.error("Date or Time should be null in excel row {}",row.getRowNum());
+                        throw new IllegalArgumentException("Date or Time is missing in Excel row " + row.getRowNum());
+                    }
+                    timeTableImportDTO.setTeam1(team1);
+                    timeTableImportDTO.setTeam2(team2);
+                    timeTableImportDTO.setStadium(matchStadium);
 
-                // Create a new MatchDTO and populate it
-                TimeTableImportDTO timeTableImportDTO = new TimeTableImportDTO();
-                if(!date.isEmpty() && !time.isEmpty()) {
-                    timeTableImportDTO.setDate(LocalDate.parse(date));
-                    timeTableImportDTO.setTime(LocalTime.parse(time));
-                } else {
-                    log.error("Date or Time should be null in excel row {}",row.getRowNum());
-                    throw new IllegalArgumentException("Date or Time is missing in Excel row " + row.getRowNum());
+                    // Add the MatchDTO to the list
+                    timeTableImports.add(timeTableImportDTO);
                 }
-                timeTableImportDTO.setMatchName(matchName);
-                timeTableImportDTO.setStadium(matchStadium);
-
-                // Add the MatchDTO to the list
-                timeTableImports.add(timeTableImportDTO);
             }
+            log.info("Ended processing excel import");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
