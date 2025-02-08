@@ -1,14 +1,12 @@
 package com.project.MplTournament.service;
 
-import com.project.MplTournament.entity.TimeTableImport;
-import com.project.MplTournament.repository.TimeTableImportRepo;
+import com.project.MplTournament.entity.MatchDetails;
+import com.project.MplTournament.repository.MatchRepo;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,10 +14,10 @@ import java.util.List;
 public class LandingPageService {
 
     @Autowired
-    private TimeTableImportRepo timeTableImportRepo;
+    private MatchRepo matchRepo;
 
-    public List<TimeTableImport> getTodayMatches() {
+    public List<MatchDetails> getTodayMatches() {
         LocalDate localDate = LocalDate.now();
-        return timeTableImportRepo.findAllByMatchDate(localDate);
+        return matchRepo.findAllByMatchDate(localDate);
     }
 }

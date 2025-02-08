@@ -1,9 +1,7 @@
 package com.project.MplTournament.controller;
 
 
-import com.project.MplTournament.entity.TimeTableImport;
 import com.project.MplTournament.entity.Users;
-import com.project.MplTournament.service.LandingPageService;
 import com.project.MplTournament.service.UserService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -14,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController

@@ -7,16 +7,14 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "MatchTimeTable")
-public class TimeTableImport {
+public class MatchDetails {
 
     @Id
     @GeneratedValue
@@ -30,7 +28,7 @@ public class TimeTableImport {
 
     private LocalTime matchTime;
 
-    private Integer matchStatus;
+    private String matchStatus;
 
     private String stadium;
 

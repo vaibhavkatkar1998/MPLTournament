@@ -24,9 +24,11 @@ public class MatchDetailsDTO {
 
     private String team2;
 
-    private Integer matchStatus;
+    private String matchStatus;
 
     private String stadium;
 
     private String selectedTeam;
+
+    private Integer betValue;
 }

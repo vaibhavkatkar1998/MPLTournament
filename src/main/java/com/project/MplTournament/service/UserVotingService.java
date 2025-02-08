@@ -31,8 +31,9 @@ public class UserVotingService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
             Users users = userPrincipal.getUser();
-            // compare local time is before match toss schedule time and also check weather user object is not null
-            if (LocalTime.now().isBefore(matchDetailsDTO.getMatchTime()) && users.getId() != null) {
+            LocalDateTime matchLocalDateAndTime = LocalDateTime.of(matchDetailsDTO.getMatchDate(),matchDetailsDTO.getMatchTime());
+            // compare local date and time is before match toss schedule time and also check weather user object is not null
+            if (LocalDateTime.now().isBefore(matchLocalDateAndTime) && users.getId() != null) {
                 Optional<UserVoting> userVotingOptional = userVotingRepo.findByMatchIdAndUserId(matchDetailsDTO.getId(),users.getId());
                 UserVoting userVoting;
                 if(userVotingOptional.isPresent()) {

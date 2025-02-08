@@ -1,8 +1,8 @@
 package com.project.MplTournament.service;
 
 import com.project.MplTournament.dto.TimeTableImportDTO;
-import com.project.MplTournament.entity.TimeTableImport;
-import com.project.MplTournament.repository.TimeTableImportRepo;
+import com.project.MplTournament.entity.MatchDetails;
+import com.project.MplTournament.repository.MatchRepo;
 import com.project.MplTournament.utility.ExcelParser;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,7 +22,7 @@ public class ExcelImportService {
     private ExcelParser excelParser;
 
     @Autowired
-    private TimeTableImportRepo timeTableImportRepo;
+    private MatchRepo matchRepo;
 
     private static final Logger log = LoggerFactory.getLogger(ExcelImportService.class);
     public void processExcelFile(MultipartFile excelFile) throws IOException {
@@ -31,14 +30,14 @@ public class ExcelImportService {
         List<TimeTableImportDTO> timeTableImportDTOList = excelParser.parseTimeTable(excelFile);
 
         for(TimeTableImportDTO timeTableImportDTO : timeTableImportDTOList) {
-            TimeTableImport timeTableImport = new TimeTableImport();
-            timeTableImport.setMatchStatus(2);
-            timeTableImport.setStadium(timeTableImportDTO.getStadium());
-            timeTableImport.setTeam1(timeTableImportDTO.getTeam1());
-            timeTableImport.setTeam2(timeTableImportDTO.getTeam2());
-            timeTableImport.setMatchDate(timeTableImportDTO.getDate());
-            timeTableImport.setMatchTime(timeTableImportDTO.getTime());
-            timeTableImportRepo.save(timeTableImport);
+            MatchDetails matchDetails = new MatchDetails();
+            matchDetails.setMatchStatus("No result");
+            matchDetails.setStadium(timeTableImportDTO.getStadium());
+            matchDetails.setTeam1(timeTableImportDTO.getTeam1());
+            matchDetails.setTeam2(timeTableImportDTO.getTeam2());
+            matchDetails.setMatchDate(timeTableImportDTO.getDate());
+            matchDetails.setMatchTime(timeTableImportDTO.getTime());
+            matchRepo.save(matchDetails);
         }
     }
 }

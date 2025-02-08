@@ -1,9 +1,7 @@
 package com.project.MplTournament.controller;
 
-import com.project.MplTournament.entity.TimeTableImport;
+import com.project.MplTournament.entity.MatchDetails;
 import com.project.MplTournament.service.LandingPageService;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +23,9 @@ public class LandingPageController {
     private LandingPageService landingPageService;
 
     @GetMapping("/todayMatches")
-    public ResponseEntity<List<TimeTableImport>> getTodayMatches(){
-        List<TimeTableImport> timeTableImport = landingPageService.getTodayMatches();
-        return ResponseEntity.status(HttpStatus.OK).body(timeTableImport);
+    public ResponseEntity<List<MatchDetails>> getTodayMatches(){
+        List<MatchDetails> matchDetails = landingPageService.getTodayMatches();
+        return ResponseEntity.status(HttpStatus.OK).body(matchDetails);
     }
 
 }

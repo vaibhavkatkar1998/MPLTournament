@@ -38,4 +38,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Voting Time Exceeds: " + ex.getMessage());
     }
+
+    @ExceptionHandler(MatchNotFoundException.class)
+    public ResponseEntity<String> handleMatchNotFound(MatchNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Match details not found: " + ex.getMessage());
+    }
 }

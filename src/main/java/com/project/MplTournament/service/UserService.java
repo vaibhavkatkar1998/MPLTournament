@@ -2,22 +2,22 @@ package com.project.MplTournament.service;
 
 
 import com.project.MplTournament.ExcpetionHandler.UserNameNotFoundException;
+import com.project.MplTournament.entity.MatchDetails;
 import com.project.MplTournament.entity.UserPrincipal;
+import com.project.MplTournament.entity.UserVoting;
 import com.project.MplTournament.entity.Users;
 import com.project.MplTournament.repository.UserRepo;
+import com.project.MplTournament.repository.UserVotingRepo;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +32,11 @@ public class UserService {
 
     private final JwtService jwtService;
 
+    private final UserVotingRepo userVotingRepo;
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
+
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     public String registerUser(Users user) {
         user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
@@ -57,5 +61,28 @@ public class UserService {
             throw new UserNameNotFoundException("Invalid user");
         }
         return "";
+    }
+
+    public void updateUserPoints(MatchDetails matchDetailsResponse, Integer betValue) {
+        log.info("Find user voting by match id {}", matchDetailsResponse.getId());
+        List<UserVoting> userVotingList = userVotingRepo.findByMatchId(matchDetailsResponse.getId());
+        if(!userVotingList.isEmpty()) {
+            for (UserVoting userVoting : userVotingList) {
+                // checking if match status and user voted for status is not same
+                if(!userVoting.getSelectedTeam().equals(matchDetailsResponse.getMatchStatus())) {
+                    Optional<Users> user = userRepo.findById(userVoting.getUserId());
+                    if(user.isPresent()) {
+                        Users users = user.get();
+                        // updating user point if voting and result is same
+                        users.setTotalPoints(users.getTotalPoints() + betValue);
+                        userRepo.save(users);
+                        log.info("Points updated for user {}", userVoting.getUserId());
+                    } else {
+                        log.error("User not found by user id {}",userVoting.getUserId());
+                        throw new UserNameNotFoundException("User not present");
+                    }
+                }
+            }
+        }
     }
 }

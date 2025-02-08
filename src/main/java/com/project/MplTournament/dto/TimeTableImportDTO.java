@@ -23,7 +23,7 @@ public class TimeTableImportDTO {
 
     private String team2;
 
-    private Integer matchStatus;
+    private String matchStatus;
 
     private String stadium;
 
