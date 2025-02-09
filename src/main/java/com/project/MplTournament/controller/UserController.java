@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,5 +36,10 @@ public class UserController {
         Map<String, String> token = new HashMap<>();
         token.put("token", response);
         return ResponseEntity.status(HttpStatus.OK).body(token);
+    }
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<List<Users>> getAllUsers(){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUser());
     }
 }
