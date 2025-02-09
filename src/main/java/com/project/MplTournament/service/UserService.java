@@ -41,6 +41,7 @@ public class UserService {
 
     public String registerUser(Users user) {
         user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
+        user.setRole("User");
         Users response = userRepo.save(user);
         if(response.getUserName() != null) {
             return "User register successfully";
