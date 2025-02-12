@@ -42,6 +42,7 @@ public class UserService {
     public String registerUser(Users user) {
         user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
         user.setRole("User");
+        user.setTotalPoints(0);
         Users response = userRepo.save(user);
         if(response.getUserName() != null) {
             return "User register successfully";
@@ -67,7 +68,7 @@ public class UserService {
 
     public void updateUserPoints(MatchDetails matchDetailsResponse, Integer betValue) {
         log.info("Find user voting by match id {}", matchDetailsResponse.getId());
-        List<UserVoting> userVotingList = userVotingRepo.findByMatchId(matchDetailsResponse.getId());
+        List<UserVoting> userVotingList = userVotingRepo.findByMatchDetails_Id(matchDetailsResponse.getId());
         if(!userVotingList.isEmpty()) {
             for (UserVoting userVoting : userVotingList) {
                 // checking if match status and user voted for status is not same

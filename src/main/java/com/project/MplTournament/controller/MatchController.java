@@ -49,8 +49,8 @@ public class MatchController {
 
     @PostMapping("/updateMatchResult")
     public ResponseEntity<String> updateMatchResult(@RequestBody MatchDetailsDTO matchDetailsDTO) {
-        matchService.updateMatchResult(matchDetailsDTO);
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        String response = matchService.updateMatchResult(matchDetailsDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

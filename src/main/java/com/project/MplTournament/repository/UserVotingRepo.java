@@ -9,7 +9,10 @@ import java.util.Optional;
 @Repository
 public interface UserVotingRepo extends JpaRepository<UserVoting, Integer> {
 
-    Optional<UserVoting> findByMatchIdAndUserId(Integer matchId,Integer userId);
+    Optional<UserVoting> findByMatchDetails_IdAndUserId(Integer matchId,Integer userId);
 
-    List<UserVoting> findByMatchId(Integer id);
+    List<UserVoting> findByMatchDetails_Id(Integer id);
+
+
+    List<UserVoting> findTop10ByUserIdOrderByVotedOnDesc(Integer userId);
 }

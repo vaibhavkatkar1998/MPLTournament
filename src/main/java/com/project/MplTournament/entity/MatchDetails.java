@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "MatchTimeTable")
+@Table(name = "MatchDetails")
 public class MatchDetails {
 
     @Id

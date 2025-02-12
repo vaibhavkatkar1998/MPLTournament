@@ -44,4 +44,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Match details not found: " + ex.getMessage());
     }
+
+    @ExceptionHandler(MatchResultUpdateException.class)
+    public ResponseEntity<String> matchResultUpdateException(MatchResultUpdateException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Match result update exception: " + ex.getMessage());
+    }
 }
