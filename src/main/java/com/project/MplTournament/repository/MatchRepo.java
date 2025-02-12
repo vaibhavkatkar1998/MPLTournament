@@ -11,4 +11,6 @@ import java.util.List;
 public interface MatchRepo extends JpaRepository<MatchDetails, Integer> {
 
     List<MatchDetails> findAllByMatchDate(LocalDate matchDate);
+
+    List<MatchDetails> findAllByMatchDateBetween(LocalDate yesterdayDate, LocalDate todayDate);
 }

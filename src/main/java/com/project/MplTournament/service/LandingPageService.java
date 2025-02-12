@@ -16,8 +16,13 @@ public class LandingPageService {
     @Autowired
     private MatchRepo matchRepo;
 
-    public List<MatchDetails> getTodayMatches() {
-        LocalDate localDate = LocalDate.now();
-        return matchRepo.findAllByMatchDate(localDate);
+    public List<MatchDetails> getTodayMatches(Boolean fromAdmin) {
+        LocalDate todayDate = LocalDate.now();
+        LocalDate yesterdayDate = LocalDate.now().minusDays(1);
+        if(fromAdmin) {
+            return matchRepo.findAllByMatchDateBetween(yesterdayDate, todayDate);
+        } else {
+            return matchRepo.findAllByMatchDate(todayDate);
+        }
     }
 }

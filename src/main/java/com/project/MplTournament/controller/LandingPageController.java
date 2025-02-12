@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public class LandingPageController {
     private LandingPageService landingPageService;
 
     @GetMapping("/todayMatches")
-    public ResponseEntity<List<MatchDetails>> getTodayMatches(){
-        List<MatchDetails> matchDetails = landingPageService.getTodayMatches();
+    public ResponseEntity<List<MatchDetails>> getTodayMatches(@RequestParam(required = false) Boolean fromAdmin){
+        List<MatchDetails> matchDetails = landingPageService.getTodayMatches(fromAdmin);
         return ResponseEntity.status(HttpStatus.OK).body(matchDetails);
     }
 
