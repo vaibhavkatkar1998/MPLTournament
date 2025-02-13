@@ -36,6 +36,11 @@ public class UserVotingService {
 
     private static final Logger log = LoggerFactory.getLogger(UserVotingService.class);
 
+    /**
+     * This method will use to register user vote
+     * @param matchDetailsDTO get it as response from UI
+     * @return string as response
+     */
     public String registerUserVote(MatchDetailsDTO matchDetailsDTO) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -62,10 +67,12 @@ public class UserVotingService {
                                 .matchDetails(matchDetails.get())
                                 .build();
                     } else {
+                        log.error("Match details not found with match id {}", matchDetailsDTO.getId());
                         throw new MatchNotFoundException("Match details not found with match id " + matchDetailsDTO.getId());
                     }
                 }
                 userVotingRepo.save(userVoting);
+                log.info("Voting saved successfully");
                 return "Vote saved successfully";
             } else {
                 if(users.getId() == null) {
@@ -77,10 +84,16 @@ public class UserVotingService {
                 }
             }
         } catch (RuntimeException e) {
+            log.error("Something went wrong during adding vote for user with exception {}",e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * This method returns last 10 votes of user
+     * @param userId get it as input
+     * @return list of user votes
+     */
     public List<UserVotingDTO> getLastTenVotes(Integer userId) {
         List<UserVoting> userVotingList = userVotingRepo.findTop10ByUserIdOrderByVotedOnDesc(userId);
         return userVotingList.stream().map(userVoting ->

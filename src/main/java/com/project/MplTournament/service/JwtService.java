@@ -7,6 +7,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
     private String secretkey = "";
 
     public JwtService() {
@@ -33,7 +35,7 @@ public class JwtService {
     }
 
     public String generateToken(String userName, String userRole, int userId) {
-        //Map<String, Objects> claims = new HashMap<>();
+        log.info("Generation of JWT started");
         return Jwts.builder()
                 .claim("role", userRole)
                 .claim("userId",userId)

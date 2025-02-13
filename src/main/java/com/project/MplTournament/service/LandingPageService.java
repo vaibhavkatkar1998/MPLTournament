@@ -16,9 +16,15 @@ public class LandingPageService {
     @Autowired
     private MatchRepo matchRepo;
 
+    /**
+     * This method return today's and yesterday's matches on the basis of flag
+     * @param fromAdmin flag to return today's and yesterday's matches
+     * @return list of matches
+     */
     public List<MatchDetails> getTodayMatches(Boolean fromAdmin) {
         LocalDate todayDate = LocalDate.now();
         LocalDate yesterdayDate = LocalDate.now().minusDays(1);
+        // if request coming from admin then return today's and yesterday's matches
         if(fromAdmin) {
             return matchRepo.findAllByMatchDateBetween(yesterdayDate, todayDate);
         } else {

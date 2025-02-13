@@ -23,7 +23,13 @@ public class MatchService {
 
     private static final Logger log = LoggerFactory.getLogger(MatchService.class);
 
+    /**
+     * This method is used to update match status on the basis of match result
+     * @param matchDetailsDTO got match result here as request body
+     * @return response as string
+     */
     public String updateMatchResult(MatchDetailsDTO matchDetailsDTO) {
+        // update here to check role of user it should be admin
         log.info("Finding match by match id {}", matchDetailsDTO.getId());
         Optional<MatchDetails> matchDetailsOptional = matchRepo.findById(matchDetailsDTO.getId());
         if(matchDetailsOptional.isPresent()) {
@@ -37,11 +43,14 @@ public class MatchService {
                 userService.updateUserPoints(matchDetailsResponse, matchDetailsDTO.getBetValue());
             } else {
                 // throw error of this match has been already updated
+                log.error("Match result can be update only once");
                 throw new MatchResultUpdateException("Match result can be update only once");
             }
         } else {
+            log.error("Match not found with matchId {}", matchDetailsDTO.getId());
             throw new MatchNotFoundException("Match not found with matchId " + matchDetailsDTO.getId());
         }
+        log.info("Result updated successfully");
         return "Result updated successfully";
     }
 }
