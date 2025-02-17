@@ -22,8 +22,8 @@ public class UserVotingController {
     private static final Logger log = LoggerFactory.getLogger(UserVotingController.class);
 
     @PostMapping("/registerVote")
-    public ResponseEntity<String> registerVote(@RequestBody MatchDetailsDTO matchDetailsDTO) {
-        String response = userVotingService.registerUserVote(matchDetailsDTO);
+    public ResponseEntity<String> registerVote(@RequestBody MatchDetailsDTO matchDetailsDTO, @RequestParam Integer userId) {
+        String response = userVotingService.registerUserVote(matchDetailsDTO, userId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

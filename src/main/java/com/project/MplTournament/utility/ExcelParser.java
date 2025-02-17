@@ -13,12 +13,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 @Configuration
 public class ExcelParser {
+
+    private static final List<String> DATE_FORMATS = List.of(
+            "d/M/yy",      // 22/3/25
+            "d/M/yyyy",    // 1/4/2025
+            "dd/MM/yyyy",  // 22/03/2025
+            "MM/dd/yyyy",  // 03/22/2025
+            "yyyy-MM-dd"   // 2025-03-22
+    );
 
     private static final Logger log = LoggerFactory.getLogger(ExcelParser.class);
 
@@ -45,7 +55,7 @@ public class ExcelParser {
                     // Create a new MatchDTO and populate it
                     TimeTableImportDTO timeTableImportDTO = new TimeTableImportDTO();
                     if(!date.isEmpty() && !time.isEmpty()) {
-                        timeTableImportDTO.setDate(LocalDate.parse(date));
+                        timeTableImportDTO.setDate(parseDate(date));
                         timeTableImportDTO.setTime(LocalTime.parse(time));
                     } else {
                         log.error("Date or Time should be null in excel row {}",row.getRowNum());
@@ -89,6 +99,16 @@ public class ExcelParser {
         } else {
             return String.valueOf(cell.getNumericCellValue());
         }
+    }
+
+    public static LocalDate parseDate(String dateStr) {
+        for (String format : DATE_FORMATS) {
+            try {
+                return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(format));
+            } catch (DateTimeParseException ignored) {
+            }
+        }
+        throw new IllegalArgumentException("Invalid date format: " + dateStr);
     }
 
 }
