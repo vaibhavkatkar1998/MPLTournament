@@ -9,6 +9,8 @@ import com.project.MplTournament.repository.MatchRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -55,5 +57,14 @@ public class MatchService {
         }
         log.info("Result updated successfully");
         return "Result updated successfully";
+    }
+
+    /**
+     * Get list of all matches from DB in count of page
+     * @param pageable page 0 size 15
+     * @return list of page
+     */
+    public Page<MatchDetails> getAllMatches(Pageable pageable) {
+        return matchRepo.findAll(pageable);
     }
 }
