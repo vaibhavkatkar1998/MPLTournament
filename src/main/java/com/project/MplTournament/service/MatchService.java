@@ -25,7 +25,8 @@ public class MatchService {
     private static final Logger log = LoggerFactory.getLogger(MatchService.class);
 
     /**
-     * This method is used to update match status on the basis of match result
+     * This method is used to update match status on the basis of match result can be updated
+     * by admin role only
      * @param matchDetailsDTO got match result here as request body
      * @return response as string
      */
