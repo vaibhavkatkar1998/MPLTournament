@@ -9,6 +9,7 @@ import com.project.MplTournament.repository.MatchRepo;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class MatchService {
      * @param matchDetailsDTO got match result here as request body
      * @return response as string
      */
+    @PreAuthorize("hasRole('Admin')")
     public String updateMatchResult(MatchDetailsDTO matchDetailsDTO) {
         // update here to check role of user it should be admin
         log.info("Finding match by match id {}", matchDetailsDTO.getId());
