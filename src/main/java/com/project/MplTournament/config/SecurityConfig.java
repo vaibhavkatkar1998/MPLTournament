@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Enable CORS
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("custom-login", "register").permitAll() // Allow login & public endpoints
-                        .requestMatchers("/updateMatchResult").hasRole("Admin")
+                        .requestMatchers("/updateMatchResult", "/resetUserPassword").hasRole("Admin")
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(unauthorizedEntryPoint()) // Return 401 instead of 302

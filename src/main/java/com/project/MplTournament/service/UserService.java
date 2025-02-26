@@ -2,6 +2,7 @@ package com.project.MplTournament.service;
 
 
 import com.project.MplTournament.ExcpetionHandler.UserNameNotFoundException;
+import com.project.MplTournament.dto.PasswordResetDTO;
 import com.project.MplTournament.entity.MatchDetails;
 import com.project.MplTournament.entity.UserPrincipal;
 import com.project.MplTournament.entity.UserVoting;
@@ -20,8 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -90,36 +90,69 @@ public class UserService {
      * @param betValue getting custom bet value
      */
     public void updateUserPoints(MatchDetails matchDetailsResponse, Integer betValue) {
-        log.info("Find user voting by match id {}", matchDetailsResponse.getId());
+        log.info("Finding user votes for match id {}", matchDetailsResponse.getId());
+
+        List<Users> allUsers = userRepo.findAll();
         List<UserVoting> userVotingList = userVotingRepo.findByMatchDetails_Id(matchDetailsResponse.getId());
-        if(!userVotingList.isEmpty()) {
+
+        Map<Integer, Users> updatedUsers = new HashMap<>();
+
+        if (!userVotingList.isEmpty()) {
             for (UserVoting userVoting : userVotingList) {
-                // checking if match status and user voted for status is not same
-                if(!userVoting.getSelectedTeam().equals(matchDetailsResponse.getMatchStatus())) {
-                    Optional<Users> user = userRepo.findById(userVoting.getUserId());
-                    if(user.isPresent()) {
-                        Users users = user.get();
-                        // adding user point if voting and result is not same because they loose
-                        users.setTotalPoints(users.getTotalPoints() + betValue);
-                        userRepo.save(users);
-                        log.debug("Points updated for user {}", userVoting.getUserId());
-                    } else {
-                        log.error("User not found by user id {}",userVoting.getUserId());
-                        throw new UserNameNotFoundException("User not present");
+                userRepo.findById(userVoting.getUserId()).ifPresent(user -> {
+                    // Increase points for incorrect vote
+                    if (!userVoting.getSelectedTeam().equals(matchDetailsResponse.getMatchStatus())) {
+                        user.setTotalPoints(user.getTotalPoints() + betValue);
                     }
-                }
+                    // Store user for update
+                    updatedUsers.put(user.getId(), user);
+                    log.debug("Updated points for voting user {}", userVoting.getUserId());
+                });
             }
         } else {
-            log.error("User voting list not found with matchId {}",matchDetailsResponse.getId());
+            log.error("User voting list not found with matchId {}", matchDetailsResponse.getId());
         }
+
+        // Add 25 points to users who didn't vote (not in updatedUsers)
+        for (Users user : allUsers) {
+            if (!updatedUsers.containsKey(user.getId())) {
+                user.setTotalPoints(user.getTotalPoints() + betValue);
+                updatedUsers.put(user.getId(), user);
+                log.debug("Added 25 points for non-voting user {}", user.getId());
+            }
+        }
+
+        // Save all updated users in a single batch
+        userRepo.saveAll(updatedUsers.values());
+        log.info("User points updated successfully.");
     }
+
 
     /**
      * Get list of all user to showcase leader board
      * @return list of users
      */
     public List<Users> getAllUser() {
-        return userRepo.findAll(Sort.by(Sort.Direction.DESC, "totalPoints"));
+        return userRepo.findAll(Sort.by(Sort.Direction.ASC, "totalPoints"));
+    }
+
+    /**
+     * Reset user password internally(only for admin) if user forgot there password
+     * @param passwordResetDTO accept userName and newPassword
+     * @return response message
+     */
+    public String resetUserPassword(PasswordResetDTO passwordResetDTO) {
+        Users users = userRepo.findByUserName(passwordResetDTO.getUserName());
+        if(users == null) {
+            throw new UserNameNotFoundException("No user found with name " + passwordResetDTO.getUserName());
+        }
+        if(passwordResetDTO.getNewPassword().length() > 6) {
+            users.setUserPassword(bCryptPasswordEncoder.encode(passwordResetDTO.getNewPassword()));
+        } else {
+            throw new RuntimeException("Length of password should be greater that 6");
+        }
+        userRepo.save(users);
+        return "Password reset successfully for user " + passwordResetDTO.getUserName();
     }
 
 }
