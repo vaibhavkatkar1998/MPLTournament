@@ -55,7 +55,7 @@ public class UserVotingService {
             Optional<Users> users = userRepo.findById(userId);
             LocalDateTime matchLocalDateAndTime = LocalDateTime.of(matchDetailsDTO.getMatchDate(),matchDetailsDTO.getMatchTime());
             // compare local date and time is before match toss schedule time and also check weather user object is not null
-            if (LocalDateTime.now().isBefore(matchLocalDateAndTime) && users.isPresent()) {
+            if (LocalDateTime.now(ZoneId.of("Asia/Kolkata")).isBefore(matchLocalDateAndTime) && users.isPresent()) {
                 Optional<UserVoting> userVotingOptional = userVotingRepo.findByMatchDetails_IdAndUserId(matchDetailsDTO.getId(),users.get().getId());
                 UserVoting userVoting;
                 if(userVotingOptional.isPresent()) {
@@ -109,7 +109,7 @@ public class UserVotingService {
 
 
     public List<VotingResultDTO> getAllUserVotes() {
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         List<MatchDetails> matchDetails = matchRepo.findAllByMatchDate(LocalDate.now());
         List<VotingResultDTO> votingResultDTOList = new ArrayList<>();
         for(MatchDetails matchDetail : matchDetails) {
@@ -135,6 +135,7 @@ public class UserVotingService {
                         .toList();
                 votingResultDTOList.add(
                         new VotingResultDTO(matchDetail.getTeam1(),matchDetail.getTeam2(),team1Percentage, team2Percentage, totalVotesList));
+                log.debug("Got response from API for Final result {}",votingResultDTOList.size());
             }
         }
         return votingResultDTOList;
