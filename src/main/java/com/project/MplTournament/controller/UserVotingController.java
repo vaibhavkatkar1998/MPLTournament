@@ -2,6 +2,7 @@ package com.project.MplTournament.controller;
 
 import com.project.MplTournament.dto.MatchDetailsDTO;
 import com.project.MplTournament.dto.UserVotingDTO;
+import com.project.MplTournament.dto.VotingResultDTO;
 import com.project.MplTournament.entity.UserVoting;
 import com.project.MplTournament.service.UserVotingService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,12 @@ public class UserVotingController {
     @GetMapping("/getLast10Votes")
     public ResponseEntity<List<UserVotingDTO>> getLast1oVotes(@RequestParam Integer userId) {
         List<UserVotingDTO> response = userVotingService.getLastTenVotes(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/getAllUserVotes")
+    public ResponseEntity<List<VotingResultDTO>> getAllUserVotes() {
+        List<VotingResultDTO> response = userVotingService.getAllUserVotes();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

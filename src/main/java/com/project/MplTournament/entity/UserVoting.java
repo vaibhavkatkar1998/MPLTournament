@@ -22,7 +22,9 @@ public class UserVoting {
 
     private String selectedTeam;
 
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "match_id", referencedColumnName = "id", nullable = false)

@@ -4,6 +4,8 @@ import com.project.MplTournament.ExcpetionHandler.UserNameNotFoundException;
 import com.project.MplTournament.ExcpetionHandler.VotingTimeExceedException;
 import com.project.MplTournament.dto.MatchDetailsDTO;
 import com.project.MplTournament.dto.UserVotingDTO;
+import com.project.MplTournament.dto.VoteDetailDTO;
+import com.project.MplTournament.dto.VotingResultDTO;
 import com.project.MplTournament.entity.MatchDetails;
 import com.project.MplTournament.entity.UserPrincipal;
 import com.project.MplTournament.entity.UserVoting;
@@ -20,9 +22,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -66,7 +70,7 @@ public class UserVotingService {
                         userVoting = UserVoting.builder()
                                 .selectedTeam(matchDetailsDTO.getSelectedTeam())
                                 .votedOn(new Date())
-                                .userId(users.get().getId())
+                                .user(users.get())
                                 .matchDetails(matchDetails.get())
                                 .build();
                     } else {
@@ -101,6 +105,39 @@ public class UserVotingService {
         List<UserVoting> userVotingList = userVotingRepo.findTop10ByUserIdOrderByVotedOnDesc(userId);
         return userVotingList.stream().map(userVoting ->
                 modelMapper.map(userVoting,UserVotingDTO.class)).toList();
+    }
+
+
+    public List<VotingResultDTO> getAllUserVotes() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        List<MatchDetails> matchDetails = matchRepo.findAllByMatchDate(LocalDate.now());
+        List<VotingResultDTO> votingResultDTOList = new ArrayList<>();
+        for(MatchDetails matchDetail : matchDetails) {
+            LocalDateTime matchLocalDateTime =
+                    LocalDateTime.of(matchDetail.getMatchDate(), matchDetail.getMatchTime());
+            // if local time is after match time
+            if (localDateTime.isAfter(matchLocalDateTime)) {
+                List<UserVoting> userVotingServiceList = userVotingRepo.findByMatchDetails_Id(matchDetail.getId());
+                long team1Votes = userVotingServiceList.stream()
+                        .filter(vote -> vote.getSelectedTeam().equals(matchDetail.getTeam1()))
+                        .count();
+
+                long team2Votes = userVotingServiceList.stream()
+                        .filter(vote -> vote.getSelectedTeam().equals(matchDetail.getTeam2()))
+                        .count();
+
+                long totalVotes = userVotingServiceList.size();
+
+                int team1Percentage = totalVotes > 0 ? (int) ((team1Votes * 100) / totalVotes) : 0;
+                int team2Percentage = totalVotes > 0 ? (int) ((team2Votes * 100) / totalVotes) : 0;
+                List<VoteDetailDTO> totalVotesList = userVotingServiceList.stream()
+                        .map(vote -> new VoteDetailDTO(vote.getUser().getUserName(), vote.getSelectedTeam()))
+                        .toList();
+                votingResultDTOList.add(
+                        new VotingResultDTO(matchDetail.getTeam1(),matchDetail.getTeam2(),team1Percentage, team2Percentage, totalVotesList));
+            }
+        }
+        return votingResultDTOList;
     }
 
 }

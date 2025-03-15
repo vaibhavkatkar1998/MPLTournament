@@ -1,5 +1,6 @@
 package com.project.MplTournament.dto;
 
+import com.project.MplTournament.entity.Users;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class UserVotingDTO {
 
     private String selectedTeam;
 
-    private Integer userId;
+    private Users user;
 
     private Integer matchId;
 

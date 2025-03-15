@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +67,16 @@ public class UserService {
     public String verifyUser(Users user) {
         try {
             log.info("Started Login {}", Instant.now());
+            // Fetch user from the database with case-sensitive check
+            Users foundUser = userRepo.findByUserName(user.getUserName());
+            if(foundUser == null) {
+                throw new UserNameNotFoundException("User not found");
+            }
+            // Ensure case-sensitive match
+            if (!foundUser.getUserName().equals(user.getUserName())) {
+                throw new UserNameNotFoundException("Case Mismatch for user name");
+            }
+            // Token creation and user validation
             Authentication authentication =
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(),user.getUserPassword()));
             if(authentication.isAuthenticated()) {
@@ -99,14 +110,14 @@ public class UserService {
 
         if (!userVotingList.isEmpty()) {
             for (UserVoting userVoting : userVotingList) {
-                userRepo.findById(userVoting.getUserId()).ifPresent(user -> {
+                userRepo.findById(userVoting.getUser().getId()).ifPresent(user -> {
                     // Increase points for incorrect vote
                     if (!userVoting.getSelectedTeam().equals(matchDetailsResponse.getMatchStatus())) {
                         user.setTotalPoints(user.getTotalPoints() + betValue);
                     }
                     // Store user for update
                     updatedUsers.put(user.getId(), user);
-                    log.debug("Updated points for voting user {}", userVoting.getUserId());
+                    log.debug("Updated points for voting user {}", userVoting.getUser().getUserName());
                 });
             }
         } else {
