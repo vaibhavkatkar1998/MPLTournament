@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -22,8 +23,8 @@ public class LandingPageService {
      * @return list of matches
      */
     public List<MatchDetails> getTodayMatches(Boolean fromAdmin) {
-        LocalDate todayDate = LocalDate.now();
-        LocalDate yesterdayDate = LocalDate.now().minusDays(1);
+        LocalDate todayDate = LocalDate.now(ZoneId.of("Asia/Kolkata"));
+        LocalDate yesterdayDate = LocalDate.now(ZoneId.of("Asia/Kolkata")).minusDays(1);
         // if request coming from admin then return today's and yesterday's matches
         if(fromAdmin) {
             return matchRepo.findAllByMatchDateBetween(yesterdayDate, todayDate);

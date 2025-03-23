@@ -110,7 +110,7 @@ public class UserVotingService {
 
     public List<VotingResultDTO> getAllUserVotes() {
         LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
-        List<MatchDetails> matchDetails = matchRepo.findAllByMatchDate(LocalDate.now());
+        List<MatchDetails> matchDetails = matchRepo.findAllByMatchDate(LocalDate.now(ZoneId.of("Asia/Kolkata")));
         List<VotingResultDTO> votingResultDTOList = new ArrayList<>();
         for(MatchDetails matchDetail : matchDetails) {
             LocalDateTime matchLocalDateTime =
