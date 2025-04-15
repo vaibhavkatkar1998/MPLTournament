@@ -17,12 +17,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -144,8 +144,25 @@ public class UserService {
      * @return list of users
      */
     public List<Users> getAllUser() {
-        return userRepo.findAll(Sort.by(Sort.Direction.ASC, "totalPoints"));
+        List<Users> users = userRepo.findAll(Sort.by(Sort.Direction.ASC, "totalPoints"));
+        for (Users users1 : users) {
+            List<UserVoting> userVotingList = userVotingRepo.findByUser_Id(users1.getId());
+            int totalUserVote = userVotingList.size();
+            AtomicInteger winningCount = new AtomicInteger();
+            userVotingList.forEach(userVoting -> {
+                if (Objects.equals(userVoting.getSelectedTeam(), userVoting.getMatchDetails().getMatchStatus())) {
+                    winningCount.getAndIncrement();
+                }
+            });
+            int winningPercentage = 0;
+            if (totalUserVote > 0) {
+                winningPercentage = (winningCount.get() * 100) / totalUserVote;
+            }
+            users1.setWiningPercentage(winningPercentage);
+        }
+        return users;
     }
+
 
     /**
      * Reset user password internally(only for admin) if user forgot there password

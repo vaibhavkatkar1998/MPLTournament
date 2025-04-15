@@ -27,4 +27,6 @@ public class Users {
     private String role;
 
     private int totalPoints;
+
+    private int winingPercentage;
 }

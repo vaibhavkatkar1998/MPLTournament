@@ -13,6 +13,8 @@ public interface UserVotingRepo extends JpaRepository<UserVoting, Integer> {
 
     List<UserVoting> findByMatchDetails_Id(Integer id);
 
+    List<UserVoting> findByUser_Id(Integer id);
+
 
     List<UserVoting> findTop10ByUserIdOrderByVotedOnDesc(Integer userId);
 }
