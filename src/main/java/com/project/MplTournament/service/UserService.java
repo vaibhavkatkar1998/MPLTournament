@@ -3,6 +3,7 @@ package com.project.MplTournament.service;
 
 import com.project.MplTournament.ExcpetionHandler.UserNameNotFoundException;
 import com.project.MplTournament.dto.PasswordResetDTO;
+import com.project.MplTournament.dto.UserDTO;
 import com.project.MplTournament.entity.MatchDetails;
 import com.project.MplTournament.entity.UserPrincipal;
 import com.project.MplTournament.entity.UserVoting;
@@ -10,6 +11,7 @@ import com.project.MplTournament.entity.Users;
 import com.project.MplTournament.repository.UserRepo;
 import com.project.MplTournament.repository.UserVotingRepo;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,8 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
+    private final ModelMapper modelMapper;
 
     /**
      * This method is used to register user by setting some default values.
@@ -143,9 +147,10 @@ public class UserService {
      * Get list of all user to showcase leader board
      * @return list of users
      */
-    public List<Users> getAllUser() {
-        List<Users> users = userRepo.findAll(Sort.by(Sort.Direction.ASC, "totalPoints"));
-        for (Users users1 : users) {
+    public List<UserDTO> getAllUser() {
+        List<UserDTO> users = userRepo.findAll(Sort.by(Sort.Direction.ASC, "totalPoints"))
+                .stream().map(users1 -> modelMapper.map(users1, UserDTO.class)).toList();
+        for (UserDTO users1 : users) {
             List<UserVoting> userVotingList = userVotingRepo.findByUser_Id(users1.getId());
             int totalUserVote = userVotingList.size();
             AtomicInteger winningCount = new AtomicInteger();
@@ -158,6 +163,7 @@ public class UserService {
             if (totalUserVote > 0) {
                 winningPercentage = (winningCount.get() * 100) / totalUserVote;
             }
+            users1.setTotalMatchVotedFor(totalUserVote);
             users1.setWiningPercentage(winningPercentage);
         }
         return users;

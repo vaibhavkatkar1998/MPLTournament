@@ -2,6 +2,7 @@ package com.project.MplTournament.controller;
 
 
 import com.project.MplTournament.dto.PasswordResetDTO;
+import com.project.MplTournament.dto.UserDTO;
 import com.project.MplTournament.entity.Users;
 import com.project.MplTournament.service.UserService;
 import lombok.AllArgsConstructor;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/getAllUsers")
-    public ResponseEntity<List<Users>> getAllUsers(){
+    public ResponseEntity<List<UserDTO>> getAllUsers(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUser());
     }
 
