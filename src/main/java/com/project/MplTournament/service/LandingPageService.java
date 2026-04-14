@@ -18,18 +18,21 @@ public class LandingPageService {
     private MatchRepo matchRepo;
 
     /**
-     * This method return today's and yesterday's matches on the basis of flag
-     * @param fromAdmin flag to return today's and yesterday's matches
+     * This method returns matches for the landing page.
+     * For users it returns today's and tomorrow's matches so they can vote in advance.
+     * For admin it returns yesterday's and today's matches.
+     * @param fromAdmin flag to return admin-oriented match list
      * @return list of matches
      */
     public List<MatchDetails> getTodayMatches(Boolean fromAdmin) {
         LocalDate todayDate = LocalDate.now(ZoneId.of("Asia/Kolkata"));
         LocalDate yesterdayDate = LocalDate.now(ZoneId.of("Asia/Kolkata")).minusDays(1);
+        LocalDate tomorrowDate = todayDate.plusDays(1);
         // if request coming from admin then return today's and yesterday's matches
-        if(fromAdmin) {
+        if(Boolean.TRUE.equals(fromAdmin)) {
             return matchRepo.findAllByMatchDateBetween(yesterdayDate, todayDate);
         } else {
-            return matchRepo.findAllByMatchDate(todayDate);
+            return matchRepo.findAllByMatchDateBetween(todayDate, tomorrowDate);
         }
     }
 }
