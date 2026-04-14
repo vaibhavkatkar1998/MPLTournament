@@ -1,11 +1,8 @@
 package com.project.MplTournament.controller;
 
-
-import com.project.MplTournament.dto.MatchDetailsDTO;
 import com.project.MplTournament.entity.MatchDetails;
 import com.project.MplTournament.service.ExcelImportService;
 import com.project.MplTournament.service.MatchService;
-import com.project.MplTournament.service.UserVotingService;
 import com.project.MplTournament.utility.Constants;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -48,8 +45,8 @@ public class MatchController {
     }
 
     @PostMapping("/updateMatchResult")
-    public ResponseEntity<String> updateMatchResult(@RequestBody MatchDetailsDTO matchDetailsDTO) {
-        String response = matchService.updateMatchResult(matchDetailsDTO);
+    public ResponseEntity<String> updateMatchResult() {
+        String response = matchService.updateMatchResult();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
